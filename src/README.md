@@ -1,0 +1,1 @@
+The `src/` directory contains the source code for pluto, including its libraries (in `lib/`).
