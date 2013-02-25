@@ -63,36 +63,36 @@ int main(int argc, char** argv)
     std::ifstream inf(in);
     
     galaxy::asteroid object_file;
-    unsigned size;
+    std::uint16_t size;
     std::string str_tmp;
     std::uint16_t int_tmp;
 
     // read in object_file.exported_labels
-    inf.read(reinterpret_cast<char*>(&size), sizeof(unsigned));
-    for (unsigned i = 0; i < size; ++i) {
+    inf.read(reinterpret_cast<char*>(&size), sizeof(std::uint16_t));
+    for (std::uint16_t i = 0; i < size; ++i) {
         std::getline(inf, str_tmp, '\0');
         inf.read(reinterpret_cast<char*>(&int_tmp), sizeof(std::uint16_t));
         object_file.exported_labels[str_tmp] = int_tmp;
     }
 
     // read in object_file.imported_labels
-    inf.read(reinterpret_cast<char*>(&size), sizeof(unsigned));
-    for (unsigned i = 0; i < size; ++i) {
-        inf.read(reinterpret_cast<char*>(&int_tmp), sizeof(std::uint16_t));
+    inf.read(reinterpret_cast<char*>(&size), sizeof(std::uint16_t));
+    for (std::uint16_t i = 0; i < size; ++i) {
         std::getline(inf, str_tmp, '\0');
+        inf.read(reinterpret_cast<char*>(&int_tmp), sizeof(std::uint16_t));
         object_file.imported_labels[int_tmp] = str_tmp;
     }
 
     // read in object_file.used_labels
-    inf.read(reinterpret_cast<char*>(&size), sizeof(unsigned));
-    for (unsigned i = 0; i < size; ++i) {
+    inf.read(reinterpret_cast<char*>(&size), sizeof(std::uint16_t));
+    for (std::uint16_t i = 0; i < size; ++i) {
         inf.read(reinterpret_cast<char*>(&int_tmp), sizeof(std::uint16_t));
         object_file.used_labels.insert(int_tmp);
     }
 
     // read in object_file.object_code
-    inf.read(reinterpret_cast<char*>(&size), sizeof(unsigned));
-    for (unsigned i = 0; i < size; ++i) {
+    inf.read(reinterpret_cast<char*>(&size), sizeof(std::uint16_t));
+    for (std::uint16_t i = 0; i < size; ++i) {
         inf.read(reinterpret_cast<char*>(&int_tmp), sizeof(std::uint16_t));
         object_file.object_code.push_back(int_tmp);
     }
@@ -102,8 +102,8 @@ int main(int argc, char** argv)
 
     /// WRITE OUT TO OUTPUT FILE
     std::ofstream outf(out);
-    unsigned binarysize = binary.size();
-    outf.write(reinterpret_cast<char*>(&binarysize), sizeof(unsigned));
+    std::uint16_t binarysize = binary.size();
+    outf.write(reinterpret_cast<char*>(&binarysize), sizeof(std::uint16_t));
     for (std::uint16_t byte : binary) {
         outf.write(reinterpret_cast<char*>(&byte), sizeof(std::uint16_t));
     }
