@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.8.5)
 project(pluto)
 
+#set(CMAKE_VERBOSE_MAKEFILE ON)
 set(VERBOSE, ON)
 set(DEBUG, ON)
 
@@ -22,16 +23,18 @@ set_target_properties(libpluto PROPERTIES PREFIX "")
 add_executable(pluto
 	src/main.cpp
 	src/lib/libpluto.hpp
+    src/lib/link_error.hpp
 	src/lib/libpluto.cpp
 )
 
-#set(TEST "YES")
-#IF (TEST)
-#	ENABLE_TESTING()
+set(TEST "YES")
+IF (TEST)
+	ENABLE_TESTING()
 
-#	add_executable(tests
-#	)
-#	target_link_libraries(test libsaturn)
+	add_executable(tests
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/test/tests.cpp
+	)
+	target_link_libraries(tests libpluto)
 
-#	ADD_TEST(tests ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tests "Unit tests")
-#ENDIF(TEST)
+	ADD_TEST(tests ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tests "Unit tests")
+ENDIF(TEST)

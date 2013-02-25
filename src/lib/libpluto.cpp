@@ -6,8 +6,10 @@
 #include <iterator>
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include <libasteroid.hpp>
+#include <link_error.hpp>
 
 std::vector<std::uint16_t> galaxy::pluto::link(std::vector<galaxy::asteroid> asteroids)
 {
@@ -17,6 +19,7 @@ std::vector<std::uint16_t> galaxy::pluto::link(std::vector<galaxy::asteroid> ast
     for (int i = 1; i < asteroids.size(); ++i) {
         offsets.push_back(offsets[i-1] + asteroids[i-1].object_code.size());
     }
+
     // Step 2: Shift their used_labels
     for (int i = 0; i < asteroids.size(); ++i) {
         for (std::uint16_t addr : asteroids[i].used_labels) {
