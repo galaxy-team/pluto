@@ -17,6 +17,7 @@ namespace galaxy {
         std::vector<std::uint16_t> link(std::vector<galaxy::asteroid>);
 
         class link_error : public std::runtime_error {
+        public:
             link_error(const std::string& what_str) : runtime_error(what_str) {}
         };
     }

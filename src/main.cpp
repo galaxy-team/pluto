@@ -68,42 +68,43 @@ int main(int argc, char** argv)
     std::uint16_t int_tmp;
 
     // read in object_file.exported_labels
-    inf.read(reinterpret_cast(&size), sizeof unsigned);
+    inf.read(reinterpret_cast<char*>(&size), sizeof(unsigned));
     for (unsigned i = 0; i < size; ++i) {
         std::getline(inf, str_tmp, '\0');
-        inf.read(reinterpret_cast(&int_tmp), sizeof std::uint16_t);
+        inf.read(reinterpret_cast<char*>(&int_tmp), sizeof(std::uint16_t));
         object_file.exported_labels[str_tmp] = int_tmp;
     }
 
     // read in object_file.imported_labels
-    inf.read(reinterpret_cast(&size), sizeof unsigned);
+    inf.read(reinterpret_cast<char*>(&size), sizeof(unsigned));
     for (unsigned i = 0; i < size; ++i) {
-        inf.read(reinterpret_cast(&int_tmp), sizeof std::uint16_t);
+        inf.read(reinterpret_cast<char*>(&int_tmp), sizeof(std::uint16_t));
         std::getline(inf, str_tmp, '\0');
-        object_file.imported_labels[str_tmp] = int_tmp;
+        object_file.imported_labels[int_tmp] = str_tmp;
     }
 
     // read in object_file.used_labels
-    inf.read(reinterpret_cast(&size), sizeof unsigned);
+    inf.read(reinterpret_cast<char*>(&size), sizeof(unsigned));
     for (unsigned i = 0; i < size; ++i) {
-        inf.read(reinterpret_cast<char*>(&int_tmp), sizeof std::uint16_t);
+        inf.read(reinterpret_cast<char*>(&int_tmp), sizeof(std::uint16_t));
         object_file.used_labels.insert(int_tmp);
     }
 
     // read in object_file.object_code
-    inf.read(reinterpret_cast(&size), sizeof unsigned);
+    inf.read(reinterpret_cast<char*>(&size), sizeof(unsigned));
     for (unsigned i = 0; i < size; ++i) {
-        inf.read(reinterpret_cast<char*>(&int_tmp), sizeof std::uint16_t);
+        inf.read(reinterpret_cast<char*>(&int_tmp), sizeof(std::uint16_t));
         object_file.object_code.push_back(int_tmp);
     }
 
     /// LINK THE OBJECT CODE
-    std::vector<std::uint16_t> binary = galaxy::pluto::link(object_file);
+    std::vector<std::uint16_t> binary = galaxy::pluto::link(std::vector<galaxy::asteroid>{object_file});
 
     /// WRITE OUT TO OUTPUT FILE
     std::ofstream outf(out);
-    outf.write(&binary.size(), sizeof std::uint32_t);
+    unsigned binarysize = binary.size();
+    outf.write(reinterpret_cast<char*>(&binarysize), sizeof(unsigned));
     for (std::uint16_t byte : binary) {
-        outf.write(&byte, sizeof byte);
+        outf.write(reinterpret_cast<char*>(&byte), sizeof(std::uint16_t));
     }
 }

@@ -15,7 +15,7 @@ std::vector<std::uint16_t> galaxy::pluto::link(std::vector<galaxy::asteroid> ast
     std::vector<int> offsets;
     offsets.push_back(0);
     for (int i = 1; i < asteroids.size(); ++i) {
-        offsets.push_back(asteroids[i-1] + asteroids[i-1].object_code.size());
+        offsets.push_back(offsets[i-1] + asteroids[i-1].object_code.size());
     }
     // Step 2: Shift their used_labels
     for (int i = 0; i < asteroids.size(); ++i) {
@@ -50,7 +50,7 @@ std::vector<std::uint16_t> galaxy::pluto::link(std::vector<galaxy::asteroid> ast
     // Step 6: Concatenate together final binaries.
     std::vector<std::uint16_t> binary;
     for (int i = 0; i < asteroids.size(); ++i) {
-        std::copy(asteroids[i].object_code.begin(), asteroids[i].object_code.end(); std::back_inserter(binary));
+        std::copy(asteroids[i].object_code.begin(), asteroids[i].object_code.end(), std::back_inserter(binary));
     }
 
     // Example:
