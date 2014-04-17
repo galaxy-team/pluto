@@ -25,14 +25,9 @@ add_executable(pluto
 )
 
 target_link_libraries(pluto libpluto)
-set(TEST "YES")
-IF (TEST)
-	ENABLE_TESTING()
 
-	add_executable(tests
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/test/tests.cpp
-	)
-	target_link_libraries(tests libpluto)
+add_executable(test_pluto
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/test/tests.cpp
+)
+target_link_libraries(test_pluto libpluto)
 
-	ADD_TEST(tests ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tests "Unit tests")
-ENDIF(TEST)
