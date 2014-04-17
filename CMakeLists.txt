@@ -21,12 +21,10 @@ add_library(libpluto
 set_target_properties(libpluto PROPERTIES PREFIX "")
 
 add_executable(pluto
-	src/main.cpp
-	src/lib/libpluto.hpp
-    src/lib/link_error.hpp
-	src/lib/libpluto.cpp
+    src/main.cpp
 )
 
+target_link_libraries(pluto libpluto)
 set(TEST "YES")
 IF (TEST)
 	ENABLE_TESTING()
