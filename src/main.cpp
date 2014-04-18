@@ -30,52 +30,37 @@ file named "LICENSE.txt".
 #include <libasteroid.hpp>
 #include <libpluto.hpp>
 
-int main(int argc, char** argv)
-{
-    /// DECLARE INPUT AND OUTPUT FILENAMES.
-    std::string in;
-    std::string out;
+/* third party */
+#include "OptionParser.h"
 
-    /// GET INPUT AND OUTPUT FILENAMES FROM COMMAND LINE ARGUMENTS
-    // Test that we have the right number of arguments
-    if (argc <= 1 || argc >= 4) {
-        std::cerr << "Error: Invalid usage. Usage is `pluto inputfile outputfile`"  << std::endl;
-        return -1;
-    } else {
-        // The input filename is always the first argument.
-        in = argv[1];
+std::vector<galaxy::asteroid> read_in_files(std::vector<std::string> filenames) {
+    std::vector<galaxy::asteroid> asteroids;
 
-        // If the output filename is unspecified, use a modified form of
-        // the input filename.
-        //
-        // e.g. "pluto boot.asm" is equivalent to "pluto boot.asm boot.o"
-        if (argc == 2) {
-            // Strip the last file extension, and replace with ".o"
-            out = in.substr(0, in.find_last_of('.')) + ".o";
+    for (auto filename : filenames) {
+        std::ifstream inf(filename);
+
+        if (!inf.good()) {
+            std::cerr << "Could not open input file: " << filename << std::endl;
+            exit(-1);
         }
-        // Otherwise, we use the second argument as the output filename.
-        else {
-            out = argv[2];
-        }
+
+        asteroids.push_back(
+            galaxy::asteroid_belt::read_obj(inf)
+        );
+
+        inf.close();
     }
 
-    /// READ IN THE INPUT FILE - sorry about the mess
-    std::ifstream inf(in);
-    
-    if (!inf.good()) {
-        std::cerr << "Bad file" << std::endl;
-        return -1;
+    return asteroids;
+}
+
+void write_out_binary(std::string filename, std::vector<std::uint16_t> binary) {
+    std::ofstream outf(filename);
+
+    if (!outf.good()) {
+        std::cerr << "Could not open output file: " << filename << std::endl;
+        exit(-1);
     }
-
-    auto object_file = galaxy::asteroid_belt::read_obj(inf);
-
-    inf.close();
-
-    /// LINK THE OBJECT CODE
-    std::vector<std::uint16_t> binary = galaxy::pluto::link(std::vector<galaxy::asteroid>{object_file});
-
-    /// WRITE OUT TO OUTPUT FILE
-    std::ofstream outf(out);
 
     galaxy::asteroid_belt::write_uint16_t(outf, binary.size());
     for (std::uint16_t byte : binary) {
@@ -83,4 +68,44 @@ int main(int argc, char** argv)
     }
 
     outf.close();
+}
+
+int main(int argc, char** argv)
+{
+    // setup the command line argument parser
+    optparse::OptionParser parser = optparse::OptionParser()
+       .description("Pluto, Galaxy's linker")
+       .usage("usage: %prog [options] <input_files> <output_filename>");
+
+    // parse the buggers - Dom
+    optparse::Values options = parser.parse_args(argc, argv);
+    std::vector<std::string> args = parser.args();
+
+    // declare input and output filenames
+    std::vector<std::string> in;
+    std::string out;
+
+    // get input and output filenames from command line arguments
+    // Test that we have the right number of arguments
+    if (argc <= 2) {
+        std::cerr << "Error: You must provide at least one input, and one output file."  << std::endl;
+        parser.print_help();
+        return -1;
+    } else {
+        // remove the last argument, as it is the output filename
+        out = args.back();
+        args.pop_back();
+
+        // The input filenames are all arguments bar the last.
+        in = args;
+    }
+
+    // load in the object files
+    std::vector<galaxy::asteroid> input_files = read_in_files(in);
+
+    // link the object code
+    std::vector<std::uint16_t> binary = galaxy::pluto::link(input_files);
+
+    // write out to output file
+    write_out_binary(out, binary);
 }

@@ -20,11 +20,23 @@ add_library(libpluto
 
 set_target_properties(libpluto PROPERTIES PREFIX "")
 
+
+set(OPTIONPARSER_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third-party/optparse/)
+include_directories(${OPTIONPARSER_DIR})
+if (TARGET optionparser)
+    message(STATUS "OptionParser already built as part of another part of Galaxy")
+else()
+    # setup OptionParser
+    add_library(optionparser
+        ${OPTIONPARSER_DIR}/OptionParser.cpp
+    )
+endif()
+
 add_executable(pluto
     src/main.cpp
 )
 
-target_link_libraries(pluto libpluto)
+target_link_libraries(pluto libpluto optionparser)
 
 add_executable(test_pluto
     ${CMAKE_CURRENT_SOURCE_DIR}/src/test/tests.cpp
