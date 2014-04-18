@@ -81,13 +81,20 @@ int main(int argc, char** argv)
     optparse::Values options = parser.parse_args(argc, argv);
     std::vector<std::string> args = parser.args();
 
+    // Test that we have the right number of arguments
+    if (args.empty()) {
+        // if no positional (required) arguments were provided, print help and exit
+        parser.print_help();
+        return -1;
+    }
+
     // declare input and output filenames
     std::vector<std::string> in;
     std::string out;
 
     // get input and output filenames from command line arguments
     // Test that we have the right number of arguments
-    if (argc <= 2) {
+    if (args.size() < 2) {
         std::cerr << "Error: You must provide at least one input, and one output file."  << std::endl;
         parser.print_help();
         return -1;
