@@ -26,6 +26,7 @@ std::vector<std::uint16_t> galaxy::pluto::link(std::vector<galaxy::asteroid> ast
             asteroids[i].object_code[addr] += offsets[i];
         }
     }
+
     // Step 3: Create a global (w.r.t. the asteroids, not w.r.t. this program) exported_labels map.
     std::unordered_map<std::string, std::uint16_t> exported_labels;
     for (int i = 0; i < asteroids.size(); ++i) {
@@ -39,6 +40,7 @@ std::vector<std::uint16_t> galaxy::pluto::link(std::vector<galaxy::asteroid> ast
             }
         }
     }
+
     // Step 4: Check that all imported labels have been exported somewhere.
     // Step 5: Shift their imported_labels
     for (int i = 0; i < asteroids.size(); ++i) {

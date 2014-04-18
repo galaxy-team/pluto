@@ -11,4 +11,3 @@ namespace galaxy {
 }
 
 #endif /* LINK_ERROR_HPP */
-
